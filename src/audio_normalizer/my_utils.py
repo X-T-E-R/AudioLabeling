@@ -1,5 +1,7 @@
 import soundfile as sf
-from pyloudnorm import Meter, loudness_normalize
+import numpy as np
+from pyloudnorm import Meter, normalize
+import os
 
 def normalize_loudness(audio_path, target_loudness, target_path):
     """
@@ -24,12 +26,12 @@ def normalize_loudness(audio_path, target_loudness, target_path):
         loudness = meter.integrated_loudness(data)
 
         # 响度归一化
-        normalized_audio = loudness_normalize(data, rate, loudness, target_loudness)
+        normalized_audio = normalize.loudness(data, loudness, target_loudness)
 
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
         # 保存归一化后的音频文件
         sf.write(target_path, normalized_audio, rate)
 
         return True
     except Exception as e:
-        print(f"响度归一化过程中出错: {e}")
-        return False
+        raise e
