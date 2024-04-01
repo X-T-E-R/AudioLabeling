@@ -21,7 +21,7 @@ with gr.Blocks() as app:
     with gr.Row():
         gr.HTML(
             f"""<h1>{i18n("AudioLabeling")}</h1>
-            <p>{i18n("这是一个程序，用于打标音频。")}</p><p>{i18n("作者: ")}<a href="https://github.com/X-T-E-R">XTer</a></p>"""
+            <p>{i18n("这是一个程序，用于处理音频数据集")}</p><p>{i18n("开源地址: ")}<a href="https://github.com/X-T-E-R/AudioLabeling">github</a></p>"""
         )
     with gr.Row():
         # 选择要使用的模块
