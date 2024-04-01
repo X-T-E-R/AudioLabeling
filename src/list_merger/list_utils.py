@@ -10,7 +10,7 @@ def merge_list_folders(first_list_file, second_list_file, provide_character, fir
             filename, character1, language, content = line.split('|')
             filenames.add(filename)
 
-            character = character1 if character in ["", None] else provide_character
+            character = character1 if provide_character in ["", None] else provide_character
             new_line = f"{filename}|{character}|{language}|{content}"
             merged_lines.append(new_line)
     with open(second_list_file, 'r', encoding="utf-8") as f:
@@ -26,7 +26,7 @@ def merge_list_folders(first_list_file, second_list_file, provide_character, fir
                 os.rename(os.path.join(second_folder, orig_filename), os.path.join(first_folder, filename))
             except Exception as e:
                 raise e
-            character = character1 if character in ["", None] else provide_character
+            character = character1 if provide_character in ["", None] else provide_character
             new_line = f"{filename}|{character}|{language}|{content}"
             merged_lines.append(new_line)
     os.remove(second_list_file)

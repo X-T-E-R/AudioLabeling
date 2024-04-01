@@ -3,7 +3,7 @@ import gradio as gr
 import sys
 sys.path.append('.')
 
-from list_merger.list_utils import merge_list_folders
+from src.list_merger.list_utils import merge_list_folders
 from tools.i18n.i18n import I18nAuto
 import os
 

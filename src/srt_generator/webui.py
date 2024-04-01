@@ -3,15 +3,15 @@ import gradio as gr
 import sys
 sys.path.append('.')
 
-from empty_template.my_utils import greet
+
 from tools.i18n.i18n import I18nAuto
-from tools.my_utils import scan_audios, scan_audios_and_folders
+from tools.my_utils import scan_audios_walk, scan_audios_and_folders
 import os
 
 i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__), "i18n/locale"))
 
 port = 8993
-is_share = True
+is_share = False
 if len(sys.argv) > 2:
     port = int(sys.argv[1])
     is_share = eval(sys.argv[2])
@@ -27,7 +27,7 @@ def get_audios_dropdown(folder):
 def print_filenames(audio_path):
     audio_list = []
     if os.path.isdir(audio_path):
-        audio_list = scan_audios(audio_path)
+        audio_list = [os.path.join(audio_path,filename) for filename in scan_audios_walk(audio_path)]
     else:
         audio_list = [audio_path]
     
@@ -35,7 +35,8 @@ def print_filenames(audio_path):
         
 
 def run_as_Tab():
-    
+    with gr.Row():
+        gr.Markdown(i18n("这一块内容还没有做好，推荐项目 https://github.com/alibaba-damo-academy/FunClip 或者 剪映 用以生成字幕文件。"))
     with gr.Row():
         with gr.Column(scale=2) as input_col:
             with gr.Tabs():
@@ -47,7 +48,6 @@ def run_as_Tab():
                     scan_folder_button.click(get_audios_dropdown, [input_folder_path_text], outputs=[audio_files_dropdown])
                 with gr.Tab(i18n("上传文件")):
                     upload_audio = gr.Audio(type="filepath",label=i18n("音频文件"))
-                    # input_audio_file = gr.File(label=i18n("上传音频文件"), type="audio", file_types=["mp3", "wav", "ogg"])
             with gr.Tabs():
                 with gr.Tab(i18n("内容预览")):
                     input_audio_path_text = gr.Textbox("", label=i18n("音频文件/文件夹"),interactive=False)
@@ -66,7 +66,7 @@ def run_as_Tab():
         with gr.Column(scale=2):
             output_text = gr.Textbox("", label=i18n("输出"),interactive=False, lines=10, max_lines=20)
         
-        get_filenames_button.click(print_filenames, [input_audio_path_text], outputs=[output_text])
+        
 
 # 如果以模块形式运行
 if __name__ == "__main__":
@@ -75,8 +75,8 @@ if __name__ == "__main__":
             gr.HTML(f"""<h1>{i18n("空白模板示例")}</h1>
             <p>{i18n("这是一个空白模板示例。")}</p>
             """)
-        with gr.Row():
-            run_as_Tab()
+        
+        run_as_Tab()
         
     app.launch(
         server_name="0.0.0.0",

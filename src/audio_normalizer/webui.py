@@ -3,9 +3,9 @@ import gradio as gr
 import sys
 sys.path.append('.')
 
-from empty_template.my_utils import greet
+from src.audio_normalizer.my_utils import greet
 from tools.i18n.i18n import I18nAuto
-from tools.my_utils import scan_audios, scan_audios_and_folders
+from tools.my_utils import scan_audios_walk, scan_audios_and_folders
 import os
 
 i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__), "i18n/locale"))
@@ -27,7 +27,7 @@ def get_audios_dropdown(folder):
 def print_filenames(audio_path):
     audio_list = []
     if os.path.isdir(audio_path):
-        audio_list = scan_audios(audio_path)
+        audio_list = [os.path.join(audio_path,filename) for filename in scan_audios_walk(audio_path)]
     else:
         audio_list = [audio_path]
     
@@ -75,8 +75,7 @@ if __name__ == "__main__":
             gr.HTML(f"""<h1>{i18n("空白模板示例")}</h1>
             <p>{i18n("这是一个空白模板示例。")}</p>
             """)
-        with gr.Row():
-            run_as_Tab()
+        run_as_Tab()
         
     app.launch(
         server_name="0.0.0.0",

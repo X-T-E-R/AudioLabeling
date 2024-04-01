@@ -3,7 +3,7 @@ import gradio as gr
 import sys
 sys.path.append('.')
 
-from srt_slicer.srt_utils import merge_subtitles_with_lib, parse_srt_with_lib, generate_srt_with_lib, slice_audio_with_lib, count_words_multilang
+from src.srt_slicer.srt_utils import merge_subtitles_with_lib, parse_srt_with_lib, generate_srt_with_lib, slice_audio_with_lib, count_words_multilang
 from tools.i18n.i18n import I18nAuto
 import os
 
