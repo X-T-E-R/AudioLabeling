@@ -5,10 +5,11 @@ from tools.i18n.i18n import I18nAuto
 i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__), "i18n/locale"))
 # 给定的模块列表
 modules = [
-    {"name": i18n("预处理音频"), "path": "srt_1.webui"},
+    # {"name": i18n("音频降噪与增强"), "path": "srt_1.webui"},
+    {"name": i18n("生成srt"), "path": "srt_generator.webui"},
     {"name": i18n("从srt和音频打标"), "path": "srt_slicer.webui"},
-    {"name": i18n("合并list文件"), "path": "list_merger.webui"}
-    
+    {"name": i18n("合并list文件"), "path": "list_merger.webui"},
+    # {"name": i18n("模板示例"), "path": "empty_template.webui"}
 ]
 
 

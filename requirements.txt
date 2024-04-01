@@ -8,3 +8,4 @@ scipy
 gradio==4.19
 ffmpeg-python
 srt
+funasr

@@ -15,10 +15,8 @@ if len(sys.argv) > 2:
     port = int(sys.argv[1])
     is_share = eval(sys.argv[2])
 
-
 def get_relative_path(path, base):
     return os.path.relpath(path, base)
-
 
 def save_srt_to_file(srt_text, save_folder, character):
     character_folder = os.path.join(save_folder, character)
@@ -64,7 +62,7 @@ def run_as_Tab():
     
     with gr.Row():
         with gr.Column(scale=2):
-            scan_list_folder = gr.Textbox("output/sliced_audio", label=i18n("文件夹路径"),interactive=True)
+            scan_list_folder = gr.Textbox("Output/sliced_audio", label=i18n("文件夹路径"),interactive=True)
             scan_list_button = gr.Button(i18n("扫描文件夹"), variant="secondary")
             first_list_folder = gr.Dropdown([], label=i18n("主文件夹"),interactive=True)
             second_list_folder = gr.Dropdown([], label=i18n("次文件夹"),interactive=True)

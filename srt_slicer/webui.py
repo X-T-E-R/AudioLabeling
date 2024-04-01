@@ -178,7 +178,7 @@ def run_as_Tab():
         with gr.Column(scale=2) as input_col:
             with gr.Tabs():
                 with gr.Tab(i18n("读取本地文件")):
-                    input_folder = gr.Textbox("input/srt_and_audios", label=i18n("文件夹路径"),interactive=True)
+                    input_folder = gr.Textbox("Input/srt_and_audios", label=i18n("文件夹路径"),interactive=True)
                     scan_button = gr.Button(i18n("扫描文件夹"), variant="secondary",interactive=True)
                     srt_files_list = gr.Dropdown([], label=i18n("SRT文件"),interactive=True)
                     audio_files_list = gr.Dropdown([], label=i18n("音频文件"),interactive=True)
@@ -217,7 +217,7 @@ def run_as_Tab():
                         language = gr.Dropdown([i18n(i) for i in [ "ZH", "EN", "JA"]], value="ZH", label=i18n("语言"),interactive=True)
                         audio_format = gr.Dropdown(["mp3", "wav", "ogg"], value="wav", label=i18n("音频格式"),interactive=True)
                     with gr.Group():
-                        save_folder = gr.Textbox("output/sliced_audio", label=i18n("保存文件夹"),interactive=True)
+                        save_folder = gr.Textbox("Output/sliced_audio", label=i18n("保存文件夹"),interactive=True)
                         character = gr.Textbox("character", label=i18n("保存子文件夹名称"),interactive=True)
                         character_warning = gr.Textbox(i18n("注意：该文件夹已存在"), label=i18n("提示"),interactive=False,visible=False)
                     save_srt_button = gr.Button(i18n("保存合并后字幕"),variant="secondary",interactive=True)

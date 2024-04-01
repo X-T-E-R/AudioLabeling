@@ -1,3 +1,7 @@
+# from https://github.com/X-T-E-R/GPT-SoVITS-Inference/blob/stable/tools/i18n
+# modified from https://github.com/RVC-Boss/GPT-SoVITS/tree/main/tools/i18n
+# modified by XTer
+
 import ast
 import json
 from collections import OrderedDict
