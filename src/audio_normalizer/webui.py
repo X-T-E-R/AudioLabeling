@@ -71,7 +71,7 @@ def print_filenames(audio_path):
 
 def run_as_Tab():
     with gr.Row():
-        gr.Markdown(i18n("用于将响度归一化到一个统一的值，可提供文件或文件夹。"))
+        gr.Markdown(f"""{i18n("用于将响度归一化到一个统一的值，可提供文件或文件夹。")}\n\n{i18n("对切分好的音频效果更佳。")}""")
     with gr.Row():
         with gr.Column(scale=2) as input_col:
             with gr.Tabs():
