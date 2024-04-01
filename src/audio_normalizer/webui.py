@@ -52,11 +52,13 @@ def normalize_fn(audio_path, target_path, target_loudness, audio_files_dropdown,
         except Exception as e:
             gr.Warning(i18n("响度归一化过程中出错")+f": {e}")
 
+
 def change_rewrite_checkbox(rewrite_checkbox):
     if rewrite_checkbox:
-        return gr.Textbox("", label=i18n("目标文件夹"),interactive=True, visible=False)
+        return gr.Textbox("", visible=False)
     else:
-        return gr.Textbox(visible=True)
+        return gr.Textbox("Output/normalized_audios", visible=True)
+
 
 def print_filenames(audio_path):
     audio_list = []
