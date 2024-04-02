@@ -34,7 +34,7 @@ def print_filenames(audio_path):
     return "\n".join(audio_list)
         
 
-def run_as_Tab():
+def run_as_Tab(app:gr.Blocks = None):
     with gr.Row():
         gr.Markdown(i18n("这一块内容还没有做好，推荐项目 https://ultimatevocalremover.com/ 与 https://github.com/resemble-ai/resemble-enhance  用以降噪或者音频增强。"))
     with gr.Row():

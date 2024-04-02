@@ -173,7 +173,7 @@ def check_character_foldfer(folder, character):
         return gr.Textbox(visible=True)
     return gr.Textbox(visible=False)
 
-def run_as_Tab():
+def run_as_Tab(app:gr.Blocks = None):
      with gr.Row():
         with gr.Column(scale=2) as input_col:
             with gr.Tabs():

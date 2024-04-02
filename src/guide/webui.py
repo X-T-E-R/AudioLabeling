@@ -19,7 +19,7 @@ markdown_file = os.path.join("guide_cn.md")
 with open(markdown_file, "r", encoding="utf-8") as f:
     markdown_text = f.read()
 
-def run_as_Tab():
+def run_as_Tab(app:gr.Blocks = None):
     
     with gr.Row():
         gr.Markdown(markdown_text)

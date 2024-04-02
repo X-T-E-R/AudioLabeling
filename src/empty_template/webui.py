@@ -34,7 +34,7 @@ def print_filenames(audio_path):
     return "\n".join(audio_list)
         
 
-def run_as_Tab():
+def run_as_Tab(app:gr.Blocks = None):
     
     with gr.Row():
         with gr.Column(scale=2) as input_col:

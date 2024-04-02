@@ -6,6 +6,14 @@ scipy
 gradio==4.19
 ffmpeg-python
 srt
-funasr
+
+funasr>=1.0.20
+hdbscan
+
+
+jieba
 pyloudnorm
 soundfile
+torch
+torchvision
+torchaudio

@@ -58,7 +58,7 @@ def preview_merged_list(first_list_folder, second_list_folder, merge_list_charac
         return ""
 
 
-def run_as_Tab():
+def run_as_Tab(app:gr.Blocks = None):
     
     with gr.Row():
         with gr.Column(scale=2):

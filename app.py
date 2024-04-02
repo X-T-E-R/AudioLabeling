@@ -6,10 +6,10 @@ i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__
 # 给定的模块列表
 modules = [
     {"name": i18n("指南"), "path": "src.guide.webui"},
+    {"name": i18n("生成srt"), "path": "src.srt_generator.webui"},
     {"name": i18n("从srt和音频切分"), "path": "src.srt_slicer.webui"},
     {"name": i18n("合并list文件"), "path": "src.list_merger.webui"},
     {"name": i18n("响度标准化"), "path": "src.audio_normalizer.webui"},
-    {"name": i18n("生成srt(没做好)"), "path": "src.srt_generator.webui"},
     {"name": i18n("音频降噪与增强(没做好)"), "path": "src.audio_enhancer.webui"},
     # {"name": i18n("list文件筛选器(没做好)"), "path": "src.list_filter.webui"},
     # {"name": i18n("从已有数据集生成list(没做好)"), "path": "src.list_generator.webui"},
@@ -32,7 +32,7 @@ with gr.Blocks() as app:
                     try:
                         module = importlib.import_module(module_info["path"])
                         # 调用模块中的函数
-                        module.run_as_Tab()
+                        module.run_as_Tab(app)
                     except Exception as e:
                         gr.HTML(f"<h1>{i18n('加载模块失败')}</h1><p>{str(e)}</p>")
 
