@@ -76,7 +76,7 @@ if __name__ == "__main__":
             <p>{i18n("这是一个空白模板示例。")}</p>
             """)
         
-        run_as_Tab()
+        run_as_Tab(app)
         
     app.launch(
         server_name="0.0.0.0",

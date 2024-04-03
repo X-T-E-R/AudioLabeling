@@ -83,7 +83,7 @@ if __name__ == "__main__":
             gr.HTML(f"""<h1>{i18n("List合并插件")}</h1>
             <p>{i18n("这是一个插件，用于合并List文件夹。")}</p><p>{i18n("作者: ")}<a href="https://github.com/X-T-E-R">XTer</a></p>
             """)
-        run_as_Tab()
+        run_as_Tab(app)
     app.launch(
         server_name="0.0.0.0",
         inbrowser=True,

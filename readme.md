@@ -11,15 +11,15 @@
 1. 前置音频处理
    1. 去人声&降噪&去混响之类
    2. （可选）AI增强并修复
-   3. 生成srt文件（可选自动多说话人分类）
+   3. 生成srt文件
 2. 切分并生成list文件
    1. 通过SRT文件切分音频并生成list文件
    2. 直接通过已经有打标文件的数据集生成list文件
 3. 后置音频处理
    1. 响度标准化
 4. 对list文件操作
-   1. （可选）多说话人分类
-   2. （可选）合并多个list文件
+   1. （可选）合并多个list文件
+   2. （可选）根据特定情感/多说话人分类
    3. （可选）筛选掉不符合时长、文本要求等的数据
 
 ### 模块介绍
@@ -29,6 +29,8 @@
 - **从srt和音频切分** (`src.srt_slicer`): 这个模块可以从 SRT 字幕文件和对应的音频文件中自动切分出各段音频，便于后续处理。
 - **合并list文件** (`src.list_merger`): 当有多个数据列表需要合并为一个统一的列表时，此模块能够简化合并过程。
 - **响度标准化** (`src.audio_normalizer`): 用于将音频文件的响度标准化到一致的水平，确保数据输入的一致性。
+- **情感识别** (`src.emotion_recognition`): 基于emotion2vec实现，用于把音频按9种情感分类。
+- **多说话人分类(在做)** (`src.speaker_classifier`): 基于3D-Speaker实现，可以将list文件分成不同的说话人。
 - **list文件筛选器(没做好)** (`src.list_filter`): 当需要从大量数据中筛选特定项时，此模块能提供帮助，目前正在开发中。
 - **从已有数据集生成list(没做好)** (`src.list_generator`): 可以基于现有的数据集自动生成列表，方便管理和使用，目前仍在完善中。
 
@@ -60,7 +62,7 @@
 
 您还可以选择手动安装
 
-创建虚拟环境（建议python=3.10，要求python>3.8）- 安装torch的cuda版本（可选） - 安装requirements.txt
+创建虚拟环境（建议python=3.10，要求python>3.8）-> 安装torch的cuda版本（可选） -> 安装requirements.txt
 
 有关指令
 
@@ -81,3 +83,5 @@ pip install install -r requirements.txt
 2. i18n modified from GPT-soVITS
 3. funasr
 4. srt
+5. emotion2vec
+6. 3D-Speaker

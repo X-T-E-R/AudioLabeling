@@ -38,12 +38,14 @@ def scan_audios(base_folder):
     audio_list.extend(scan_ext(base_folder, audio_file_ext_list))
     return audio_list
 
-def scan_audios_and_folders(base_folder):
+def scan_audios_and_folders(base_folder, add_self=True):
     if not os.path.exists(base_folder):
         os.makedirs(base_folder, exist_ok=True)
     audio_list = []
     audio_list.extend(scan_ext(base_folder, audio_file_ext_list))
     audio_list.extend(scan_folders(base_folder))
+    if add_self:
+        audio_list.append("./")
     return audio_list
 
 def scan_ext_walk(folder, ext_list):

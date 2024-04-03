@@ -9,7 +9,7 @@ srt
 
 funasr>=1.0.20
 hdbscan
-
+modelscope
 
 jieba
 pyloudnorm

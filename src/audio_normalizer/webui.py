@@ -140,7 +140,7 @@ if __name__ == "__main__":
     with gr.Blocks() as app:
         with gr.Row():
             gr.HTML(f"""<h1>{i18n("响度标准化")}</h1>""")
-        run_as_Tab()
+        run_as_Tab(app)
         
     app.launch(
         server_name="0.0.0.0",

@@ -12,9 +12,10 @@ def generate_srt_with_lib(subtitles):
 
 def merge_subtitles_with_lib(subtitles, short_interval, max_interval, max_text_length=30, add_period=True, merge_zero_interval=True):
     # 标点符号
-    punctuations = ["。","!", "！", "？", "?", "；", ";",  "…"]
-    punctuations_extanded = punctuations
-    punctuations_extanded.extend([ "：", ":", "，", ",", "—",])
+    punctuations = ["。","!", "！", "？", "?", "；", ";",  "…", ".", "~"]
+    punctuations_extanded = []
+    punctuations_extanded.extend(punctuations)
+    punctuations_extanded.extend([ "：", ":", "，", ",", "—","、"])
     
     # 直接合并间隔特别短的字幕
     if merge_zero_interval:

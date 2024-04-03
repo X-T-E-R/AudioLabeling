@@ -318,7 +318,7 @@ if __name__ == "__main__":
                 <li>{i18n("根据面板合并短句并过滤你不希望出现的句子。")}</li>
                 <li>{i18n("随后保存成切分好的音频与list文件。")}</li>
             </ol>""")
-        run_as_Tab()
+        run_as_Tab(app)
     app.launch(
         server_name="0.0.0.0",
         inbrowser=True,

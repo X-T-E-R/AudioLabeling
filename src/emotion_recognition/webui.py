@@ -5,8 +5,8 @@ sys.path.append('.')
 
 from typing import List
 from tools.i18n.i18n import I18nAuto
-from tools.my_utils import scan_audios_walk, scan_audios_and_folders
-import os
+from tools.my_utils import scan_audios_walk, scan_audios_and_folders, scan_ext
+import os, json
 
 i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__), "i18n/locale"))
 
@@ -17,13 +17,13 @@ if len(sys.argv) > 2:
     is_share = eval(sys.argv[2])
 
 try:
-    from src.srt_generator.audio2srt import Audio2Srt
-    asr_available = True
+    from src.emotion_recognition.audio2emotion import Audio2Emotion
+    model_available = True
 except Exception as e:
-    asr_available = False
+    model_available = False
 
-global audio2srt
-audio2srt = None
+global audio2emotion
+audio2emotion = None
 
 def get_audios_dropdown(folder):
     audio_list = scan_audios_and_folders(folder)
@@ -42,11 +42,11 @@ def print_filenames(audio_path):
     return "\n".join(audio_list)
 
 def load_from_model_status():
-    global audio2srt
-    if audio2srt is None:
+    global audio2emotion
+    if audio2emotion is None:
         return [
             gr.Textbox(interactive=True, visible=True),
-            gr.Checkbox(interactive=True, visible=True),
+            gr.Checkbox(interactive=True, visible=False),
             gr.Textbox("未加载模型", interactive=False),
             gr.Button(interactive=True, visible=True),
             gr.Button(interactive=False, visible=False)
@@ -61,59 +61,103 @@ def load_from_model_status():
             ]
 
 def load_model(models_path, use_cam):
-    global audio2srt
-    if not asr_available:
+    global audio2emotion
+    if not model_available:
         gr.Warning(i18n("请先安装funasr模块，并检查是否安装torch。"))
         return load_from_model_status()
-    if audio2srt is None:
+    if audio2emotion is None:
         gr.Info(i18n("开始加载模型，如果您并未使用手动提供模型并且第一次使用，请耐心等待modelscope下载有关模型。"))
-        audio2srt = Audio2Srt(models_path, allow_spk=use_cam)
+        audio2emotion = Audio2Emotion(models_path)
         gr.Info(i18n("模型加载成功！"))
     else:
         gr.Info(i18n("请勿重复加载，刷新页面以获得最新情况！"))
     return load_from_model_status()
 
 def unload_model():
-    global audio2srt
-    if audio2srt is not None:
-        audio2srt = None
+    global audio2emotion
+    if audio2emotion is not None:
+        audio2emotion = None
         gr.Info(i18n("模型卸载成功！"))
     return load_from_model_status()
 
-def generate_srt_fn(audio_path, progress = gr.Progress()):
-    global audio2srt
-    if audio2srt is None:
-        if not asr_available:
+def generate_json_fn(audio_path, save_vec = False, return_list=False, progress = gr.Progress()):
+    global audio2emotion
+    if audio2emotion is None:
+        if not model_available:
             gr.Warning(i18n("请先安装funasr模块，并检查是否安装torch。"))
         else:
             gr.Warning(i18n("请先加载模型！"))
         return ""
     else:
+        assert isinstance(audio2emotion, Audio2Emotion)
         audio_list: List[str] = []
+        save_json_path = ""
         if os.path.isdir(audio_path):
-            audio_list = [os.path.join(audio_path,filename) for filename in scan_audios_walk(audio_path)]
+            audio_list = [filename for filename in scan_audios_walk(audio_path)]
+            save_json_path = os.path.join(audio_path, "emotion_recognition.json")
         else:
             audio_list = [audio_path]
-        gr.Info(f"{i18n('开始生成srt文件')}")
-        target_filepaths = []
+            save_json_path = audio_path.rsplit(".", 1)[0] + ".json"
+        gr.Info(f"{i18n('开始生成emotion')}")
+        recognized_emotions = []
         for audio_file in progress.tqdm(audio_list):
+            audio_file_full_path = os.path.join(audio_path, audio_file) if audio_file!=audio_path else audio_path
+            print(audio_file_full_path)
+            result = {}
             try:
-                srt_content = audio2srt.generate_srt(audio_file)
+                if save_vec:
+                    emotion, emotion_vec = audio2emotion.get_emotion(audio_path=audio_file_full_path, return_vec=True)
+                    result["emotion_vec"] = emotion_vec
+                else:
+                    emotion = audio2emotion.get_emotion(audio_path=audio_file_full_path)
+                result["audio_path"] = audio_file
+                result["emotion"] = emotion
             except Exception as e:
-                gr.Warning(f"{i18n('生成srt文件失败！')} {e}")
-            target_filepath = audio_file.rsplit(".", 1)[0] + ".srt"
-            try:
-                os.makedirs(os.path.dirname(target_filepath), exist_ok=True)
-                with open(target_filepath, "w", encoding="utf-8") as f:
-                    f.write(srt_content)
-                    target_filepaths.append(target_filepath)
-            except Exception as e:
-                gr.Warning(f"{i18n('生成srt文件失败！')} {e}")
-    return gr.Textbox("\n".join(target_filepaths))
+                gr.Warning(f"{i18n('生成emotion失败！')} {e}")
+            recognized_emotions.append(result)
+        json_content = json.dumps(recognized_emotions, ensure_ascii=False, indent=4)
+        try:
+            with open(save_json_path, "w", encoding="utf-8") as f:
+                f.write(json_content)
+        except Exception as e:
+            gr.Warning(f"{i18n('保存json文件失败！')} {e}")
+    if return_list:
+        return json_content, recognized_emotions
+    else:
+        return gr.Textbox(json_content)
+
+def generate_emotion_and_rename_fn(audio_path, save_vec = False, update_list = False, progress = gr.Progress()):
+    json_content, recognized_emotions = generate_json_fn(audio_path, save_vec, return_list=True, progress=progress)
+    if update_list:
+        list_file = scan_ext(audio_path, ["list"])
+        if len(list_file) > 0:
+            with open(os.path.join(audio_path, list_file[0]), "r", encoding="utf-8") as f:
+                list_content = f.read()
+        else:
+            update_list = False
+    for result in recognized_emotions:
+        audio_file = result["audio_path"]
+        audio_file_full_path = os.path.join(audio_path, audio_file) if audio_file!=audio_path else audio_path
+        base_name = os.path.basename(audio_file)
+        audio_dir = os.path.dirname(audio_file_full_path)
+        emotion = result["emotion"]
+        if len(emotion.split("/")) > 1:
+            emotion = emotion.split("/")[0]
+        new_name = f"{emotion}#{base_name}"
+        try:
+            os.rename(audio_file_full_path, os.path.join(audio_dir, new_name))
+        except Exception as e:
+            gr.Warning(f"{i18n('重命名文件失败！')} {e}")
+        if update_list:
+            list_content = list_content.replace(base_name, new_name)
+    if update_list:
+        with open(os.path.join(audio_path, list_file[0]), "w", encoding="utf-8") as f:
+            f.write(list_content)
+    return gr.Textbox(json_content)
 
 def run_as_Tab(app:gr.Blocks = None):
     with gr.Row():
-        gr.Markdown(i18n("本页面基于funasr作为语音转文字的核心， 您也可以使用 剪映 等软件用以生成字幕文件。")+"\n\n"+ i18n("需要大约3个G的显存/内存与torch，您需要按照readme安装对应版本的torch")+ "\n\n"+ i18n("您可以自动下载或手动放置ASR模型文件，具体操作见readme。"))
+        gr.Markdown(i18n("本页面基于 emotion2vec （使用funasr） 作为核心，可以识别音频为9种典型情绪。")+"\n\n"+ i18n("如果您想使用cuda，需要按照readme安装对应版本的torch")+ "\n\n"+ i18n("您可以自动下载或手动放置模型文件，具体操作见readme。"))
     with gr.Row():
         with gr.Column(scale=2) as input_col:
             with gr.Tabs():
@@ -146,13 +190,17 @@ def run_as_Tab(app:gr.Blocks = None):
             with gr.Tabs():
                 with gr.Tab(i18n("操作面板")):
                     with gr.Group():
-                        models_path_text = gr.Textbox("models/iic", label=i18n("模型文件夹路径（留空或不存在会自动下载）"),interactive=True)
-                        use_cam_checkbox = gr.Checkbox(label=i18n("进行多说话人分类"), interactive=True)
+                        models_path_text = gr.Textbox("models", label=i18n("模型文件夹路径（留空或不存在会自动下载）"),interactive=True)
+                        use_cam_checkbox = gr.Checkbox(label=i18n("进行多说话人分类"), interactive=True, visible=False)
                         model_status_text = gr.Textbox("", label=i18n("模型状态"),interactive=False)
                         load_model_button = gr.Button(i18n("加载模型"), interactive=True, visible=True, variant="primary")
                         unload_model_button = gr.Button(i18n("卸载模型"), interactive=True, visible=False, variant="secondary")
                     with gr.Group():
-                        generate_srt_button = gr.Button(i18n("生成srt文件"), variant="primary",interactive=True)
+                        save_vec_checkbox = gr.Checkbox(label=i18n("同时保存识别结果向量"), interactive=True)
+                        generate_emotion_json_button = gr.Button(i18n("识别感情成json"), variant="primary",interactive=True)
+                    with gr.Group():
+                        update_list_checkbox = gr.Checkbox(label=i18n("同时更新list文件中的文件名"), interactive=True)
+                        generate_emotion_and_rename_button = gr.Button(i18n("识别感情并重命名"), variant="primary",interactive=True)
                     app.load(
                         load_from_model_status,
                         [],
@@ -165,7 +213,7 @@ def run_as_Tab(app:gr.Blocks = None):
                         ],
                     )
                     load_model_button.click(
-                        lambda x: [gr.update(interactive=False),gr.update(interactive=False)], [], [generate_srt_button,load_model_button]
+                        lambda x: [gr.update(interactive=False),gr.update(interactive=False)], [], [generate_emotion_json_button,load_model_button]
                     ).then(
                         load_model,
                         [models_path_text, use_cam_checkbox],
@@ -177,7 +225,7 @@ def run_as_Tab(app:gr.Blocks = None):
                             unload_model_button,
                         ],
                     ).then(
-                        lambda x: gr.update(interactive=True), [], [generate_srt_button]
+                        lambda x: gr.update(interactive=True), [], [generate_emotion_json_button]
                     )
 
         with gr.Column(scale=2):
@@ -193,15 +241,24 @@ def run_as_Tab(app:gr.Blocks = None):
                 unload_model_button,
             ],
         )
-        generate_srt_button.click(
-            lambda x: gr.update(interactive=False), [], [generate_srt_button]
+        generate_emotion_json_button.click(
+            lambda x: [gr.update(interactive=False), gr.update(interactive=False)], [], [generate_emotion_json_button, generate_emotion_and_rename_button]
         ).then(
-            generate_srt_fn,
-            [input_audio_path_text],
+            generate_json_fn,
+            [input_audio_path_text, save_vec_checkbox],
             [output_text]
         ).then(
-            lambda x: gr.update(interactive=True), [], [generate_srt_button]
+            lambda x: [gr.update(interactive=True),gr.update(interactive=True)] , [], [generate_emotion_json_button, generate_emotion_and_rename_button]
         )
+        generate_emotion_and_rename_button.click(
+            lambda x: [gr.update(interactive=False), gr.update(interactive=False)], [], [generate_emotion_json_button, generate_emotion_and_rename_button]
+        ).then(
+            generate_emotion_and_rename_fn,
+            [input_audio_path_text, save_vec_checkbox, update_list_checkbox],
+            [output_text]
+        ).then(
+            lambda x: [gr.update(interactive=True),gr.update(interactive=True)] , [], [generate_emotion_json_button, generate_emotion_and_rename_button]
+        )       
 
 
 # 如果以模块形式运行
@@ -212,7 +269,7 @@ if __name__ == "__main__":
             <p>{i18n("这是一个空白模板示例。")}</p>
             """)
         
-        run_as_Tab(app)
+        run_as_Tab(app=app)
         
     app.launch(
         server_name="0.0.0.0",
