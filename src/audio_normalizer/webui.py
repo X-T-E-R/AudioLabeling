@@ -116,7 +116,7 @@ def run_as_Tab(app:gr.Blocks = None):
                 with gr.Tab(i18n("面板")):
                     with gr.Group():
                         rewrite_checkbox = gr.Checkbox(value=True, label=i18n("覆盖原文件"),interactive=True)
-                        target_path_text = gr.Textbox("Output/normalized_audios", label=i18n("目标文件夹"),interactive=True)
+                        target_path_text = gr.Textbox("Output/normalized_audios", label=i18n("目标文件夹"),interactive=True, visible=False)
                         target_loudness = gr.Slider(-40, 0, -16, step=0.1, label=i18n("目标响度（LUFS）"),interactive=True)
                     with gr.Group():
                         status_text = gr.Textbox("", label=i18n("状态"),interactive=False, lines=1)
