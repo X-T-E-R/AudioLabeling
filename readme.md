@@ -82,6 +82,7 @@ pip install install -r requirements.txt
 1. gradio
 2. i18n modified from GPT-soVITS
 3. funasr
-4. srt
-5. emotion2vec
-6. 3D-Speaker
+4. pyloudnorm
+5. srt
+6. emotion2vec
+7. 3D-Speaker
