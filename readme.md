@@ -77,12 +77,16 @@ pip install install -r requirements.txt
 
 ## Credits
 
-*文档仍在书写中，相关链接待补充
+感谢所有贡献者！
 
-1. gradio
-2. i18n modified from GPT-soVITS
-3. funasr
-4. pyloudnorm
-5. srt
-6. emotion2vec
-7. 3D-Speaker
+
+
+1. [gradio](https://www.gradio.app/)
+2. i18n modified from [GPT-soVITS](https://github.com/RVC-Boss/GPT-SoVITS)
+3. [funasr](https://github.com/alibaba-damo-academy/FunASR)
+4. [pyloudnorm](https://github.com/csteinmetz1/pyloudnorm)
+5. [srt](https://github.com/cdown/srt)
+6. [emotion2vec](https://github.com/ddlBoJack/emotion2vec)
+7. [3D-Speaker](https://github.com/alibaba-damo-academy/3D-Speaker)
+
+*文档仍在书写中，可能有遗漏
