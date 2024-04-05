@@ -166,23 +166,37 @@ def run_as_Tab(app:gr.Blocks = None):
                         input_folder_path_text = gr.Textbox("Input/srt_and_audios", label=i18n("文件夹路径"),interactive=True)
                         scan_folder_button = gr.Button(i18n("扫描文件夹"), variant="secondary",interactive=True)
                     audio_files_dropdown = gr.Dropdown([], label=i18n("音频文件/文件夹"),interactive=True)
-                    scan_folder_button.click(get_audios_dropdown, [input_folder_path_text], outputs=[audio_files_dropdown])
+                    
                 with gr.Tab(i18n("上传文件")):
                     upload_audio = gr.Audio(type="filepath",label=i18n("音频文件"))
             with gr.Tabs():
                 with gr.Tab(i18n("内容预览")):
                     input_audio_path_text = gr.Textbox("", label=i18n("音频文件/文件夹"),interactive=False, visible=False)
                     audio_files_preview_text = gr.Textbox("", label=i18n("音频文件"),interactive=False, max_lines=10, lines=10 ,visible=True)
-            upload_audio.change(lambda x: gr.Textbox(x), [upload_audio], outputs=[input_audio_path_text]).then(lambda x: gr.Textbox(x), [upload_audio], outputs=[audio_files_preview_text])
-            audio_files_dropdown.change(
+            scan_folder_button.click(
+                get_audios_dropdown,
+                [input_folder_path_text],
+                outputs=[audio_files_dropdown],
+            ).then(
                 lambda folder, filename: gr.Textbox(os.path.join(folder, filename)),
                 inputs=[input_folder_path_text, audio_files_dropdown],
                 outputs=[input_audio_path_text],
+            )
+            upload_audio.change(
+                lambda x: gr.Textbox(x), [upload_audio], outputs=[input_audio_path_text]
             ).then(
-                lambda folder, filename: gr.Textbox(
-                    print_filenames(os.path.join(folder, filename))
-                ),
+                lambda x: gr.Textbox(x),
+                [upload_audio],
+                outputs=[audio_files_preview_text],
+            )
+            audio_files_dropdown.input(
+                lambda folder, filename: gr.Textbox(os.path.join(folder, filename)),
                 inputs=[input_folder_path_text, audio_files_dropdown],
+                outputs=[input_audio_path_text],
+            )
+            input_audio_path_text.change(
+                lambda x: gr.Textbox(print_filenames(x)),
+                inputs=[input_audio_path_text],
                 outputs=[audio_files_preview_text],
             )
 
@@ -199,7 +213,7 @@ def run_as_Tab(app:gr.Blocks = None):
                         save_vec_checkbox = gr.Checkbox(label=i18n("同时保存识别结果向量"), interactive=True)
                         generate_emotion_json_button = gr.Button(i18n("识别感情成json"), variant="primary",interactive=True)
                     with gr.Group():
-                        update_list_checkbox = gr.Checkbox(label=i18n("同时更新list文件中的文件名"), interactive=True)
+                        update_list_checkbox = gr.Checkbox(value=True, label=i18n("同时更新list文件中的文件名"), interactive=True)
                         generate_emotion_and_rename_button = gr.Button(i18n("识别感情并重命名"), variant="primary",interactive=True)
                     app.load(
                         load_from_model_status,

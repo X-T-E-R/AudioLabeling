@@ -7,11 +7,11 @@ i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__
 modules = [
     {"name": i18n("指南"), "path": "src.guide.webui"},
     {"name": i18n("生成srt"), "path": "src.srt_generator.webui"},
-    {"name": i18n("从srt和音频切分"), "path": "src.srt_slicer.webui"},
+    {"name": i18n("从srt切分音频"), "path": "src.srt_slicer.webui"},
     {"name": i18n("合并list文件"), "path": "src.list_merger.webui"},
     {"name": i18n("响度标准化"), "path": "src.audio_normalizer.webui"},
     {"name": i18n("情感识别"), "path": "src.emotion_recognition.webui"},
-    {"name": i18n("多说话人分类(在做)"), "path": "src.speaker_classifier.webui"},
+    {"name": i18n("多说话人分类"), "path": "src.speaker_classifier.webui"},
     {"name": i18n("音频降噪与增强(没做好)"), "path": "src.audio_enhancer.webui"},
     # {"name": i18n("list文件筛选器(没做好)"), "path": "src.list_filter.webui"},
     # {"name": i18n("从已有数据集生成list(没做好)"), "path": "src.list_generator.webui"},

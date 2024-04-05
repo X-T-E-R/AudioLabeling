@@ -22,13 +22,15 @@ def scan_ext(folder, ext_list):
             file_list.append(get_relative_path(os.path.join(folder, file), folder))
     return file_list
 
-def scan_folders(base_folder):
+def scan_folders(base_folder, add_self=False):
     if not os.path.exists(base_folder):
         os.makedirs(base_folder, exist_ok=True)
     folder_list = []
     for folder in os.listdir(base_folder):
         if os.path.isdir(os.path.join(base_folder, folder)):
             folder_list.append(get_relative_path(os.path.join(base_folder, folder), base_folder))
+    if add_self:
+        folder_list.append(".")
     return folder_list
 
 def scan_audios(base_folder):
@@ -43,12 +45,12 @@ def scan_audios_and_folders(base_folder, add_self=True):
         os.makedirs(base_folder, exist_ok=True)
     audio_list = []
     audio_list.extend(scan_ext(base_folder, audio_file_ext_list))
-    audio_list.extend(scan_folders(base_folder))
-    if add_self:
-        audio_list.append("./")
+    audio_list.extend(scan_folders(base_folder, add_self))
     return audio_list
 
 def scan_ext_walk(folder, ext_list):
+    if isinstance(ext_list, str):
+        ext_list = [ext_list]
     if not os.path.exists(folder):
         os.makedirs(folder, exist_ok=True)
     ext_list = [ext.lower() for ext in ext_list]

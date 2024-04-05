@@ -50,16 +50,16 @@ class Audio2Srt():
                 return model_name
             
         
-        main_model = kwargs.get("model", "paraformer-zh")
-        vad_model = kwargs.get("vad_model", "fsmn-vad")
-        punc_model= kwargs.get("punc_model", "ct-punc")
-        spk_model = kwargs.get("spk_model", "cam++")
+        self.main_model = kwargs.get("model", "paraformer-zh")
+        self.vad_model = kwargs.get("vad_model", "fsmn-vad")
+        self.punc_model= kwargs.get("punc_model", "ct-punc")
+        self.spk_model = kwargs.get("spk_model", "cam++")
         
         if models_path != "":
-            self.main_model = join_models_path(main_model)
-            self.vad_model = join_models_path(vad_model)
-            self.punc_model = join_models_path(punc_model)
-            self.spk_model = join_models_path(spk_model)
+            self.main_model = join_models_path(self.main_model)
+            self.vad_model = join_models_path(self.vad_model)
+            self.punc_model = join_models_path(self.punc_model)
+            self.spk_model = join_models_path(self.spk_model)
         
         if not allow_spk:
             self.spk_model = None

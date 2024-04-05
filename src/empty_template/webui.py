@@ -41,19 +41,42 @@ def run_as_Tab(app:gr.Blocks = None):
             with gr.Tabs():
                 with gr.Tab(i18n("读取本地文件")):
                     with gr.Group():
-                        input_folder_path_text = gr.Textbox("Input/audios", label=i18n("文件夹路径"),interactive=True)
+                        input_folder_path_text = gr.Textbox("Input/srt_and_audios", label=i18n("文件夹路径"),interactive=True)
                         scan_folder_button = gr.Button(i18n("扫描文件夹"), variant="secondary",interactive=True)
                     audio_files_dropdown = gr.Dropdown([], label=i18n("音频文件/文件夹"),interactive=True)
-                    scan_folder_button.click(get_audios_dropdown, [input_folder_path_text], outputs=[audio_files_dropdown])
+                    
                 with gr.Tab(i18n("上传文件")):
                     upload_audio = gr.Audio(type="filepath",label=i18n("音频文件"))
-                    # input_audio_file = gr.File(label=i18n("上传音频文件"), type="audio", file_types=["mp3", "wav", "ogg"])
             with gr.Tabs():
                 with gr.Tab(i18n("内容预览")):
-                    input_audio_path_text = gr.Textbox("", label=i18n("音频文件/文件夹"),interactive=False)
-            upload_audio.change(lambda x: gr.Textbox(x), [upload_audio], outputs=[input_audio_path_text])
-            audio_files_dropdown.change(lambda folder,filename: gr.Textbox(os.path.join(folder,filename)), inputs=[input_folder_path_text, audio_files_dropdown], outputs=[input_audio_path_text])
-        
+                    input_audio_path_text = gr.Textbox("", label=i18n("音频文件/文件夹"),interactive=False, visible=False)
+                    audio_files_preview_text = gr.Textbox("", label=i18n("音频文件"),interactive=False, max_lines=10, lines=10 ,visible=True)
+            scan_folder_button.click(
+                get_audios_dropdown,
+                [input_folder_path_text],
+                outputs=[audio_files_dropdown],
+            ).then(
+                lambda folder, filename: gr.Textbox(os.path.join(folder, filename)),
+                inputs=[input_folder_path_text, audio_files_dropdown],
+                outputs=[input_audio_path_text],
+            )
+            upload_audio.change(
+                lambda x: gr.Textbox(x), [upload_audio], outputs=[input_audio_path_text]
+            ).then(
+                lambda x: gr.Textbox(x),
+                [upload_audio],
+                outputs=[audio_files_preview_text],
+            )
+            audio_files_dropdown.input(
+                lambda folder, filename: gr.Textbox(os.path.join(folder, filename)),
+                inputs=[input_folder_path_text, audio_files_dropdown],
+                outputs=[input_audio_path_text],
+            )
+            input_audio_path_text.change(
+                lambda x: gr.Textbox(print_filenames(x)),
+                inputs=[input_audio_path_text],
+                outputs=[audio_files_preview_text],
+            )
         with gr.Column(scale=1):
             with gr.Tabs():
                 with gr.Tab(i18n("Tab的作用是为了好看")):

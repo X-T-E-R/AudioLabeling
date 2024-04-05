@@ -17,3 +17,11 @@ soundfile
 torch
 torchvision
 torchaudio
+
+scikit-learn==1.0.2
+kaldiio
+pyyaml
+matplotlib
+pandas
+openpyxl
+fastcluster

@@ -11,10 +11,10 @@ class Audio2Emotion():
                 return os.path.join(models_path, model_name)
             else:
                 return model_name
-        main_model = kwargs.get("model", "iic/emotion2vec_base_finetuned")
+        self.main_model = kwargs.get("model", "iic/emotion2vec_base_finetuned")
 
         if models_path != "":
-            self.main_model = join_models_path(main_model)
+            self.main_model = join_models_path(self.main_model)
 
         kwargs.update({"model": self.main_model})
         # print(kwargs)

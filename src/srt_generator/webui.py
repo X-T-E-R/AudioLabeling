@@ -46,7 +46,7 @@ def load_from_model_status():
     if audio2srt is None:
         return [
             gr.Textbox(interactive=True, visible=True),
-            gr.Checkbox(interactive=True, visible=True),
+            gr.Checkbox(interactive=True, visible=False),
             gr.Textbox("未加载模型", interactive=False),
             gr.Button(interactive=True, visible=True),
             gr.Button(interactive=False, visible=False)
@@ -122,23 +122,37 @@ def run_as_Tab(app:gr.Blocks = None):
                         input_folder_path_text = gr.Textbox("Input/srt_and_audios", label=i18n("文件夹路径"),interactive=True)
                         scan_folder_button = gr.Button(i18n("扫描文件夹"), variant="secondary",interactive=True)
                     audio_files_dropdown = gr.Dropdown([], label=i18n("音频文件/文件夹"),interactive=True)
-                    scan_folder_button.click(get_audios_dropdown, [input_folder_path_text], outputs=[audio_files_dropdown])
+                    
                 with gr.Tab(i18n("上传文件")):
                     upload_audio = gr.Audio(type="filepath",label=i18n("音频文件"))
             with gr.Tabs():
                 with gr.Tab(i18n("内容预览")):
                     input_audio_path_text = gr.Textbox("", label=i18n("音频文件/文件夹"),interactive=False, visible=False)
                     audio_files_preview_text = gr.Textbox("", label=i18n("音频文件"),interactive=False, max_lines=10, lines=10 ,visible=True)
-            upload_audio.change(lambda x: gr.Textbox(x), [upload_audio], outputs=[input_audio_path_text]).then(lambda x: gr.Textbox(x), [upload_audio], outputs=[audio_files_preview_text])
-            audio_files_dropdown.change(
+            scan_folder_button.click(
+                get_audios_dropdown,
+                [input_folder_path_text],
+                outputs=[audio_files_dropdown],
+            ).then(
                 lambda folder, filename: gr.Textbox(os.path.join(folder, filename)),
                 inputs=[input_folder_path_text, audio_files_dropdown],
                 outputs=[input_audio_path_text],
+            )
+            upload_audio.change(
+                lambda x: gr.Textbox(x), [upload_audio], outputs=[input_audio_path_text]
             ).then(
-                lambda folder, filename: gr.Textbox(
-                    print_filenames(os.path.join(folder, filename))
-                ),
+                lambda x: gr.Textbox(x),
+                [upload_audio],
+                outputs=[audio_files_preview_text],
+            )
+            audio_files_dropdown.input(
+                lambda folder, filename: gr.Textbox(os.path.join(folder, filename)),
                 inputs=[input_folder_path_text, audio_files_dropdown],
+                outputs=[input_audio_path_text],
+            )
+            input_audio_path_text.change(
+                lambda x: gr.Textbox(print_filenames(x)),
+                inputs=[input_audio_path_text],
                 outputs=[audio_files_preview_text],
             )
 
@@ -147,7 +161,7 @@ def run_as_Tab(app:gr.Blocks = None):
                 with gr.Tab(i18n("操作面板")):
                     with gr.Group():
                         models_path_text = gr.Textbox("models/iic", label=i18n("模型文件夹路径（留空或不存在会自动下载）"),interactive=True)
-                        use_cam_checkbox = gr.Checkbox(label=i18n("进行多说话人分类"), interactive=True)
+                        use_cam_checkbox = gr.Checkbox(label=i18n("进行多说话人分类"), interactive=True, visible=False)
                         model_status_text = gr.Textbox("", label=i18n("模型状态"),interactive=False)
                         load_model_button = gr.Button(i18n("加载模型"), interactive=True, visible=True, variant="primary")
                         unload_model_button = gr.Button(i18n("卸载模型"), interactive=True, visible=False, variant="secondary")
