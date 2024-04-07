@@ -71,6 +71,8 @@ def count_words_multilang(text):
 
 import pydub, os
 
+
+
 # TODO: Add auto detect language
 def slice_audio_with_lib(
     audio_path,
@@ -81,6 +83,8 @@ def slice_audio_with_lib(
     post_preserve_time=0.05,
     pre_silence_time=0.1,
     post_silence_time=0.1,
+    min_audio_duration=3,
+    max_audio_duration=300,
     language="ZH",
     character="character",
 ):
@@ -95,7 +99,9 @@ def slice_audio_with_lib(
             subtitle = subtitles[i]
             start = subtitle.start.total_seconds() - pre_preserve_time
             end = subtitle.end.total_seconds() + post_preserve_time
-
+            if end - start < min_audio_duration or end - start > max_audio_duration:
+                # 如果音频片段过短或过长，跳过
+                continue
             if i < len(subtitles) - 1:
                 next_subtitle = subtitles[i + 1]
                 end = min(end, 1.0/2*(subtitle.end.total_seconds()+next_subtitle.start.total_seconds()))
