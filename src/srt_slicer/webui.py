@@ -51,16 +51,16 @@ def slice_audio(
     try:
         gr.Info(f"{i18n('正在切分音频')} {input_audio} {i18n('到')} {character_folder}")
         slice_audio_with_lib(
-            input_audio,
-            character_folder,
-            audio_format,
-            subtitles,
-            pre_preserve_time,
-            post_preserve_time,
-            pre_silence_time,
-            post_silence_time,
-            language,
-            character,
+            audio_path = input_audio,
+            save_folder = character_folder,
+            format = audio_format,
+            subtitles = subtitles,
+            pre_preserve_time = pre_preserve_time,
+            post_preserve_time = post_preserve_time,
+            pre_silence_time = pre_silence_time,
+            post_silence_time = post_silence_time,
+            language = language,
+            character = character
         )
         gr.Info(f"{i18n('切分完成')} ")
     except Exception as e:

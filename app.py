@@ -2,15 +2,18 @@ import importlib, os
 import gradio as gr
 from tools.i18n.i18n import I18nAuto
 
+is_share = True
+
+
 i18n = I18nAuto(language=None, locale_path=os.path.join(os.path.dirname(__file__), "i18n/locale"))
 # 给定的模块列表
 modules = [
     {"name": i18n("指南"), "path": "src.guide.webui"},
     {"name": i18n("生成srt"), "path": "src.srt_generator.webui"},
-    {"name": i18n("从srt切分音频"), "path": "src.srt_slicer.webui"},
-    {"name": i18n("合并list文件"), "path": "src.list_merger.webui"},
     {"name": i18n("响度标准化"), "path": "src.audio_normalizer.webui"},
     {"name": i18n("情感识别"), "path": "src.emotion_recognition.webui"},
+    {"name": i18n("从srt切分音频(精细)"), "path": "src.srt_slicer.webui"},
+    {"name": i18n("合并list文件"), "path": "src.list_merger.webui"},
     {"name": i18n("多说话人分类"), "path": "src.speaker_classifier.webui"},
     {"name": i18n("音频降噪与增强(没做好)"), "path": "src.audio_enhancer.webui"},
     # {"name": i18n("list文件筛选器(没做好)"), "path": "src.list_filter.webui"},
@@ -38,4 +41,12 @@ with gr.Blocks() as app:
                     except Exception as e:
                         gr.HTML(f"<h1>{i18n('加载模块失败')}</h1><p>{str(e)}</p>")
 
-app.launch()
+if is_share:
+    server_name = "0.0.0.0"
+else:
+    server_name = "127.0.0.1"
+app.queue().launch(
+        server_name=server_name,
+        inbrowser=True,
+        share=is_share,
+    )
