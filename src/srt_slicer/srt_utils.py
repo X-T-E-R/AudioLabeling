@@ -107,7 +107,7 @@ def slice_audio_with_lib(
                 file_name = f'{character}_{i + 1:03d}.{format}'
                 save_path = os.path.join(save_folder, file_name)
                 sliced_audio.export(save_path, format=format)
-                f.write(f"{file_name}|{character}|{language}|{subtitle.content}\n")
+                f.write(f"./{file_name}|{character}|{language}|{subtitle.content}\n")
                 print(f"Slice {file_name} from {start} to {end}")
             except Exception as e:
                 raise e
