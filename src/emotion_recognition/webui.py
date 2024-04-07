@@ -204,7 +204,7 @@ def run_as_Tab(app:gr.Blocks = None):
             with gr.Tabs():
                 with gr.Tab(i18n("操作面板")):
                     with gr.Group():
-                        models_path_text = gr.Textbox("models", label=i18n("模型文件夹路径（留空或不存在会自动下载）"),interactive=True)
+                        models_path_text = gr.Textbox("models/iic", label=i18n("模型文件夹路径（留空或不存在会自动下载）"),interactive=True)
                         use_cam_checkbox = gr.Checkbox(label=i18n("进行多说话人分类"), interactive=True, visible=False)
                         model_status_text = gr.Textbox("", label=i18n("模型状态"),interactive=False)
                         load_model_button = gr.Button(i18n("加载模型"), interactive=True, visible=True, variant="primary")

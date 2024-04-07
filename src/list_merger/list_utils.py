@@ -1,6 +1,11 @@
 import os
         
 def merge_list_folders(first_list_file, second_list_file, provide_character, first_folder, second_folder):
+    global __index
+    try:
+        __index += 1
+    except NameError:
+        __index = 1 
     merged_lines = []
     character1 = ""
     filenames = set()
@@ -19,8 +24,9 @@ def merge_list_folders(first_list_file, second_list_file, provide_character, fir
             filename, character1, language, content = line.split('|')
             orig_filename = filename
             num = 1
+            filename = f"{__index}_{filename}"
             while filename in filenames:
-                filename = f"{filename.rsplit('.', 1)[0]}_{num}.{filename.rsplit('.', 1)[1]}"
+                filename = f"{__index}_{filename.rsplit('.', 1)[0]}_{num}.{filename.rsplit('.', 1)[1]}"
                 num += 1
             try:
                 os.rename(os.path.join(second_folder, orig_filename), os.path.join(first_folder, filename))

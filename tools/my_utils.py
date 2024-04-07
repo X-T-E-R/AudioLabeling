@@ -53,7 +53,14 @@ def scan_ext_walk(folder, ext_list):
         ext_list = [ext_list]
     if not os.path.exists(folder):
         os.makedirs(folder, exist_ok=True)
-    ext_list = [ext.lower() for ext in ext_list]
+    
+    dealed_ext_list = []
+    for ext in ext_list:
+        if ext.startswith("."):
+            ext = ext[1:]
+        dealed_ext_list.append(ext.lower())
+    ext_list = dealed_ext_list
+
     file_list = []
     for root, dirs, files in os.walk(folder):
         for file in files:

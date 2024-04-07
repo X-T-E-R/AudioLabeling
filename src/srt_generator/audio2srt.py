@@ -31,10 +31,16 @@ class Res2SRT:
         srt_total = ''
         for i, d in enumerate(res["sentence_info"]):
             start, end = d['timestamp'][0][0] - offset, d['timestamp'][-1][1] - offset
+            
+            max_allowed_time = 40.0
+            max_allowed_time_ms = max_allowed_time * 1000
+            if end - start > max_allowed_time_ms:
+                continue
+            
             start_time = self.time_convert(start)
             end_time = self.time_convert(end)
             text = self.format_text(d['text'])
-
+            
             if 'spk' in d:
                 srt_total += f"{i+1}  spk{d['spk']}\n{start_time} --> {end_time}\n{text}\n\n"
             else:
@@ -81,6 +87,14 @@ class Audio2Srt():
     
     def generate_srt(self, audio_path, **kwargs):
         return self.res2srt.generate_srt(self.transcribe(audio_path, **kwargs))
+    
+    def __enter__(self):
+        # 这里可以添加进入 with 语句时需要执行的代码
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # 这里可以添加退出 with 语句时需要执行的代码
+        pass
 
 if __name__ == "__main__":
     audio_to_srt = Audio2Srt(models_path=r"E:\AItools\AudioLabeling\models\iic", allow_spk=True)

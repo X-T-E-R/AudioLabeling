@@ -11,6 +11,10 @@ class Audio2Emotion():
                 return os.path.join(models_path, model_name)
             else:
                 return model_name
+        if models_path[-1] == "/":
+            models_path = models_path[:-1]
+        if models_path.endswith("iic"):
+            models_path = models_path[:-3]
         self.main_model = kwargs.get("model", "iic/emotion2vec_base_finetuned")
 
         if models_path != "":
@@ -42,6 +46,16 @@ class Audio2Emotion():
             return emotion, emotion_vec
         else:
             return emotion
+        
+    def __enter__(self):
+        # 这里可以添加进入 with 语句时需要执行的代码
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # 这里可以添加退出 with 语句时需要执行的代码
+        pass
+
+
 
 if __name__ == "__main__":
     audio_to_srt = Audio2Emotion(models_path=r"E:\AItools\AudioLabeling\models")

@@ -2,7 +2,6 @@ import srt
 
 
 def parse_srt_with_lib(content):
-
     subtitles = list(srt.parse(content))
     return subtitles
 
@@ -54,7 +53,6 @@ def merge_subtitles_with_lib(subtitles, short_interval, max_interval, max_text_l
     return merged_subtitles
 
 
-
 def count_words_multilang(text):
     # 初始化计数器
     word_count = 0
@@ -73,8 +71,21 @@ def count_words_multilang(text):
 
 import pydub, os
 
-def slice_audio_with_lib(audio_path, save_folder, format, subtitles, pre_preserve_time, post_preserve_time, pre_silence_time, post_silence_time, language='ZH', character='character'):
-    list_file = os.path.join(save_folder, 'datamapping.list')
+# TODO: Add auto detect language
+def slice_audio_with_lib(
+    audio_path,
+    save_folder,
+    format,
+    subtitles,
+    pre_preserve_time=0.1,
+    post_preserve_time=0.05,
+    pre_silence_time=0.1,
+    post_silence_time=0.1,
+    language="ZH",
+    character="character",
+):
+    os.makedirs(save_folder, exist_ok=True)
+    list_file = os.path.join(save_folder, "datamapping.list")
     try:
         audio = pydub.AudioSegment.from_file(audio_path)
     except Exception as e:
@@ -84,7 +95,7 @@ def slice_audio_with_lib(audio_path, save_folder, format, subtitles, pre_preserv
             subtitle = subtitles[i]
             start = subtitle.start.total_seconds() - pre_preserve_time
             end = subtitle.end.total_seconds() + post_preserve_time
-                
+
             if i < len(subtitles) - 1:
                 next_subtitle = subtitles[i + 1]
                 end = min(end, 1.0/2*(subtitle.end.total_seconds()+next_subtitle.start.total_seconds()))
@@ -100,4 +111,28 @@ def slice_audio_with_lib(audio_path, save_folder, format, subtitles, pre_preserv
                 print(f"Slice {file_name} from {start} to {end}")
             except Exception as e:
                 raise e
-        
+
+def filter_subtitles(subtitles, min_length, filter_english = False, filter_words = ""):
+    filtered_subtitles = []
+    for subtitle in subtitles:
+        if count_words_multilang(subtitle.content) >= min_length:
+            flag = False
+            if filter_english:
+                for i in subtitle.content:
+                    if i in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                        flag = True
+                        break
+            if not flag and filter_words:
+                filter_words.replace("\r", "\n")
+                for word in filter_words.split("\n"):
+                    if word in subtitle.content:
+                        flag = True
+                        break
+            if not flag:
+                filtered_subtitles.append(subtitle)
+    return filtered_subtitles
+
+def filter_srt(input_text, min_length, filter_english = False, filter_words = ""):
+    subtitles = parse_srt_with_lib(input_text)
+    filtered_subtitles = filter_subtitles(subtitles, min_length, filter_english, filter_words)
+    return generate_srt_with_lib(filtered_subtitles)
