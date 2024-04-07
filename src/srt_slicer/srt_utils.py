@@ -83,8 +83,8 @@ def slice_audio_with_lib(
     post_preserve_time=0.05,
     pre_silence_time=0.1,
     post_silence_time=0.1,
-    min_audio_duration=3,
-    max_audio_duration=300,
+    min_audio_duration=2.0,
+    max_audio_duration=300.0,
     language="ZH",
     character="character",
 ):
@@ -92,13 +92,14 @@ def slice_audio_with_lib(
     list_file = os.path.join(save_folder, "datamapping.list")
     try:
         audio = pydub.AudioSegment.from_file(audio_path)
+        audio_duration = audio.duration_seconds
     except Exception as e:
         raise e
     with open(list_file, 'w', encoding="utf-8") as f:
         for i in range(len(subtitles)):
             subtitle = subtitles[i]
-            start = subtitle.start.total_seconds() - pre_preserve_time
-            end = subtitle.end.total_seconds() + post_preserve_time
+            start = max(subtitle.start.total_seconds() - pre_preserve_time, 0.0001)
+            end = min(subtitle.end.total_seconds() + post_preserve_time, audio_duration - 0.0001)
             if end - start < min_audio_duration or end - start > max_audio_duration:
                 # 如果音频片段过短或过长，跳过
                 continue
